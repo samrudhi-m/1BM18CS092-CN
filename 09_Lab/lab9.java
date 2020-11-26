@@ -1,106 +1,80 @@
 import java.util.*;
 
-public class Crc
+public class CRC{
 
-{
+    public static int n;
 
-            public static int n;
+    public static void main(String[] args){
+        Scanner in=new Scanner(System.in);
+        CRC ob=new CRC();
 
-            public static void main(String[] args)
+        String code, copy, rec,zero="0000000000000000";
 
-{
+        System.out.print("Enter poly: ");
+        code=in.nextLine();
 
-                        Scanner in=new Scanner(System.in);
+        System.out.println("Generating polynomial: 10001000000100001");
 
-                        Crc ob=new Crc();
+        n=code.length();
+        copy=code;
+        code+=zero;
 
-                        String code, copy, rec,zero="0000000000000000";
+        System.out.println("Modified poly: "+code);
 
-                        System.out.println("Enter message");
+        code=ob.divide(code);
 
-                        code=in.nextLine();
+        System.out.println("CheckSum: "+code.substring(n));
 
-                        n=code.length();
+        copy=copy.substring(0,n)+code.substring(n);
 
-                        copy=code;
+        System.out.println("Final Codeword: "+copy);
 
-                        code+=zero;
+        // System.out.print("\nEnter recived data: ");
+        // rec=in.nextLine();
 
-                        code=ob.divide(code);
+        // if(zero.equals(ob.divide(rec).substring(n)))
+        //     System.out.println("Correct bits recieved");
+        // else
+        //     System.out.println("Recieved frame contains one or more errors");
 
-                        System.out.println("Message="+copy);
+        System.out.print("Test Error detection 0(yes) 1(no)? : ");
+        int choice = in.nextInt();
 
-                        copy=copy.substring(0,n)+code.substring(n);
+        if(choice == 0){
+            System.out.print("Enter position on error: ");
+            int errorPos = in.nextInt();
 
-                        System.out.println("CRC=");
+            if(copy.charAt(errorPos) == '1')
+                copy = copy.substring(0,errorPos) + "0" + copy.substring(errorPos+1);
+            else 
+                copy = copy.substring(0,errorPos) + "1" + copy.substring(errorPos+1);
 
-                        System.out.println(code.substring(n));
+            System.out.println("Errorneous data: "+copy);
 
-                        System.out.println("transmitted frame is "+copy);
+            System.out.println("Error detected");
+        }
+        else 
+            System.out.println("No Error detection");
+    }  
 
-                        System.out.println("Enter recived data");
+    public String divide(String s){
+        int i,j;
+        char x;
+        String div="10001000000100001";
 
-                        rec=in.nextLine();
-
-                        if(zero.equals(ob.divide(rec).substring(n)))
-
-                                    System.out.println("Correct bits recieved");
-
-                        else
-
-                                    System.out.println("Recieved frame contains one or more errors");
-
-                        in.close();
-
+        for(i=0;i<n;i++){
+            x=s.charAt(i);
+            
+            for(j=0;j<17;j++){
+                if(x=='1'){
+                    if(s.charAt(i+j)!=div.charAt(j))
+                        s=s.substring(0,i+j)+"1"+s.substring(i+j+1);
+                    else
+                        s=s.substring(0,i+j)+"0"+s.substring(i+j+1);
+                }
             }
+        }
 
-           
-
-           
-
-            public String divide(String s)
-
-{
-
-                                    int i,j;
-
-                                    char x;
-
-                                    String div="10001000000100001";
-
-                                    for(i=0;i<n;i++)
-
-                                    {
-
-                                                x=s.charAt(i);
-
-                                                for(j=0;j<17;j++)
-
-                                                {
-
-                                                            if(x=='1')
-
-                                                            {if(s.charAt(i+j)!=div.charAt(j))
-
-                                                                        s=s.substring(0,i+j)+"1"+s.substring(i+j+1);
-
-                                                            else
-
-                                                                        s=s.substring(0,i+j)+"0"+s.substring(i+j+1);
-
-                                                            }
-
-                                                           
-
-                                                }
-
-                                    }
-
-
-
-
-                                    return s;
-
-            }
-
+        return s;
+    }
 }
